@@ -131,7 +131,6 @@ if __name__ == '__main__':
     glutDisplayFunc(drawScene)
     glutKeyboardFunc(handleKeypress)
     glutReshapeFunc(handleResize)
-    glutPassiveMotionFunc(handleMouse)
 
     glutTimerFunc(25, update, 0)
     glutMainLoop()
