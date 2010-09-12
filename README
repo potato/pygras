@@ -1,0 +1,4 @@
+PyGraS - python gravity simulation
+
+Calculating gravity between given objects ('stars' at the moment) and modify the position and velocity.
+Currently hard-coded with 3 stars.
