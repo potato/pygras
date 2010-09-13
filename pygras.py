@@ -8,6 +8,7 @@ from random import random
 from math import sqrt
 
 _running = 1
+_fullscreen = 0
 
 class Star:
     def __init__(self):
@@ -21,21 +22,25 @@ class Star:
         self.m = 0.02 # * pow(10, 11)
 
 def handleKeypress(key, x, y):
-    global _running
+    global _running, _fullscreen
 
     if ord(key) == 27:
         sys.exit()
     elif ord(key) == 32:
         _running ^= 1
         update(0)
+    elif key == 'f':
+        if _fullscreen:
+            glutReshapeWindow(700, 700)
+        else:
+            glutFullScreen()
+        _fullscreen ^= 1
 
 def handleResize(w, h):
     glViewport(0, 0, w, h)
-
     glMatrixMode(GL_PROJECTION)
-
     glLoadIdentity()
-    gluPerspective(45.0, w / h, 1.0, 200.0)
+    gluPerspective(45.0, round(float(w)/float(h)), 1.0, 200.0)
 
 def initRendering():
     glEnable(GL_DEPTH_TEST)
@@ -64,17 +69,17 @@ def update(value):
     for bstar in stars:
         for star in stars:
             if bstar != star:
-                if abs(star.pos[0] - bstar.pos[0]) < 0.5 and abs(star.pos[1] - bstar.pos[1]) < 0.5 and abs(star.pos[2] - bstar.pos[2]) < 0.5:
-                    stars.remove(star)
-                    continue
+                #if abs(star.pos[0] - bstar.pos[0]) < 0.5 and abs(star.pos[1] - bstar.pos[1]) < 0.5 and abs(star.pos[2] - bstar.pos[2]) < 0.5:
+                #    stars.remove(star)
+                #    continue
                 d = sqrt(pow(star.pos[0] - bstar.pos[0], 2) + pow(star.pos[1] - bstar.pos[1], 2) + pow(star.pos[2] - bstar.pos[2], 2))
                 i = ( (star.pos[0] - bstar.pos[0]) / d, (star.pos[1] - bstar.pos[1]) / d, (star.pos[2] - bstar.pos[2]) / d )
                 f = g * ((bstar.m * star.m) / (d*d))
                 f = (f * i[0], f * i[1], f * i[2])
-                a = (f[0] / bstar.m, f[1] / bstar.m, f[2] / bstar.m)
+                a = (f[0] / bstar.m / 4, f[1] / bstar.m / 4, f[2] / bstar.m / 4)
                 bstar.v = (bstar.v[0] + a[0], bstar.v[1] + a[1], bstar.v[2] + a[2]) 
 
-    glutPostRedisplay();
+    glutPostRedisplay()
     for star in stars:
         star.pos = (star.pos[0] + star.v[0], star.pos[1] + star.v[1], star.pos[2] + star.v[2]) 
     if _running:
@@ -86,17 +91,17 @@ if __name__ == '__main__':
 
     star = Star()
     star.pos = (5.0, 0.0, 0.0)
-    star.v = (0.0, 0.1, 0.1)
+    star.v = (0.0, 0.1, 0.0)
     stars.append(star)
 
     star = Star()
     star.pos = (-5.0, 0.0, 0.0)
-    star.v = (0.0, -0.1, -0.1)
+    star.v = (0.0, 0.0, 0.0)
     stars.append(star)
     
     star = Star()
     star.pos = (0.0, 0.0, 0.0)
-    star.v = (0.0, 0.0, 0.0)
+    star.v = (0.0, -0.1, 0.0)
     stars.append(star)
 
     glutInit(sys.argv)
@@ -104,6 +109,7 @@ if __name__ == '__main__':
     glutInitWindowSize(700, 700)
 
     glutCreateWindow("PyGraS - v0.00001 =)")
+    glutSetCursor(GLUT_CURSOR_NONE)
     initRendering()
 
     glutDisplayFunc(drawScene)
