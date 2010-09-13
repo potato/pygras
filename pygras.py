@@ -7,6 +7,8 @@ from OpenGL.GLUT import *
 from random import random
 from math import sqrt
 
+_running = 1
+
 class Star:
     def __init__(self):
         # position
@@ -19,8 +21,13 @@ class Star:
         self.m = 0.02 # * pow(10, 11)
 
 def handleKeypress(key, x, y):
+    global _running
+
     if ord(key) == 27:
         sys.exit()
+    elif ord(key) == 32:
+        _running ^= 1
+        update(0)
 
 def handleResize(w, h):
     glViewport(0, 0, w, h)
@@ -70,7 +77,8 @@ def update(value):
     glutPostRedisplay();
     for star in stars:
         star.pos = (star.pos[0] + star.v[0], star.pos[1] + star.v[1], star.pos[2] + star.v[2]) 
-    glutTimerFunc(25, update, 0)
+    if _running:
+        glutTimerFunc(25, update, 0)
 
 if __name__ == '__main__':
     g = 6.67428 # * pow(10, -11)
